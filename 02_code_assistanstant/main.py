@@ -51,6 +51,7 @@ def even_odd_checker(num):   #parameter
     else:
         print("odd")
 
+
 num=int(input("enter num"))     
 even_odd_checker(num)     #function call with argument 
     
