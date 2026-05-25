@@ -35,6 +35,13 @@ GitHub	Portfolio banana
 Documentation	Developer habit
 Pytest	Industry-level testing
 
+# benifits 
+GitHub repo creation
+Folder structure
+Basic Git commands
+Code commit and push flow
+Maintaining work properly like a developer
+
 # Benifits of this task 
 Prompt engineering
 AI se sahi question puchna
