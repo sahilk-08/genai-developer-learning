@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Skills Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Charlie+Display:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Charlie Display', 'Inter', sans-serif;
+      background: #0d1117;
+      color: #f4f7ff;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 120px 120px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      padding: 1rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      background: rgba(8, 12, 23, 0.92);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(18px);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+
+    .brand span {
+      color: #2684ff;
+    }
+
+    .menu-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.05);
+      color: #ffffff;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .menu-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .dashboard {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
+      gap: 1rem;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .dashboard-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      padding: 1rem 1.2rem;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .dashboard-item .label {
+      color: rgba(255, 255, 255, 0.62);
+      font-size: 0.78rem;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .dashboard-item strong {
+      font-size: 1.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    .dashboard-right {
+      position: relative;
+      width: 120px;
+      min-width: 120px;
+      height: 120px;
+      display: grid;
+      place-items: center;
+    }
+
+    #dashboard-ring {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .ring-center {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .ring-center small {
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 0.8rem;
+      margin-top: 0.25rem;
+    }
+
+    main {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem 2rem;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+      background-size: 80px 80px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 28%, rgba(38, 132, 255, 0.16), transparent 28%), radial-gradient(circle at 72% 26%, rgba(0, 101, 255, 0.12), transparent 25%), radial-gradient(circle at 40% 78%, rgba(74, 194, 255, 0.08), transparent 32%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .hero canvas {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      display: block;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(5, 8, 16, 0.92) 78%);
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 4;
+      max-width: 860px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      padding: 0.65rem 1.1rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #b8c7ff;
+      font-size: 0.88rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .hero-copy h1 {
+      margin: 1.2rem 0 1rem;
+      font-size: clamp(3rem, 5vw, 5.2rem);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+    }
+
+    .hero-copy p {
+      margin: 0 auto;
+      max-width: 720px;
+      font-size: 1rem;
+      line-height: 1.9;
+      color: rgba(255, 255, 255, 0.78);
+    }
+
+    .hero-pill {
+      position: absolute;
+      padding: 0.85rem 1.25rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(38, 132, 255, 0.98), rgba(0, 82, 204, 0.95));
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      z-index: 4;
+      box-shadow: 0 28px 60px rgba(0, 82, 204, 0.18);
+      white-space: nowrap;
+    }
+
+    .pill-1 {
+      top: 18%;
+      left: 12%;
+    }
+
+    .pill-2 {
+      top: 38%;
+      right: 14%;
+    }
+
+    .pill-3 {
+      bottom: 30%;
+      left: 10%;
+    }
+
+    .pill-4 {
+      bottom: 22%;
+      right: 18%;
+    }
+
+    .hero-icon {
+      position: absolute;
+      width: 72px;
+      height: 72px;
+      border-radius: 24px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      font-weight: 800;
+      z-index: 4;
+      box-shadow: 0 22px 48px rgba(0, 0, 0, 0.28);
+    }
+
+    .icon-1 {
+      top: 26%;
+      left: 38%;
+    }
+
+    .icon-2 {
+      top: 18%;
+      right: 22%;
+    }
+
+    .icon-3 {
+      bottom: 18%;
+      left: 48%;
+    }
+
+    #skills-sections {
+      padding: 4rem 2rem 6rem;
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+
+    .skill-section {
+      margin-bottom: 4.5rem;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.85s ease, transform 0.85s ease;
+    }
+
+    .skill-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-content {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 2.5rem;
+      align-items: flex-start;
+    }
+
+    .skill-info, .mini-network-card, .subskill-panel {
+      border-radius: 32px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 48px 100px rgba(0, 0, 0, 0.18);
+    }
+
+    .skill-info {
+      padding: 2.2rem;
+    }
+
+    .section-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.7rem 1.1rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #8fb4ff;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 1.2rem;
+    }
+
+    .skill-info h2 {
+      margin: 0 0 1rem;
+      font-size: clamp(2rem, 2.5vw, 2.6rem);
+      line-height: 1.05;
+    }
+
+    .skill-info p {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 1rem;
+      line-height: 1.95;
+    }
+
+    .skill-summary {
+      margin-top: 2.2rem;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(140px, 1fr));
+      gap: 1rem;
+    }
+
+    .summary-card {
+      padding: 1rem 1.2rem;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .summary-card strong {
+      display: block;
+      font-size: 1.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .summary-card span {
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+    }
+
+    .skill-map {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .mini-network-card {
+      position: relative;
+      padding: 1.5rem;
+      min-height: 360px;
+      overflow: hidden;
+    }
+
+    .mini-network-card canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      position: relative;
+      z-index: 1;
+    }
+
+    .subskill-nodes {
+      position: absolute;
+      left: 1.5rem;
+      right: 1.5rem;
+      bottom: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      z-index: 4;
+    }
+
+    .sub-node {
+      border: none;
+      border-radius: 999px;
+      padding: 0.72rem 1rem;
+      background: rgba(255, 255, 255, 0.06);
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .sub-node:hover,
+    .sub-node.active {
+      background: linear-gradient(135deg, rgba(38, 132, 255, 0.98), rgba(0, 82, 204, 0.9));
+      transform: translateY(-2px);
+    }
+
+    .subskill-panel {
+      padding: 1.7rem 1.8rem 2rem;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 1.08rem;
+      color: #e9efff;
+    }
+
+    .topic-list {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .topic-card {
+      padding: 1rem 1rem 1.1rem;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .topic-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(38, 132, 255, 0.45);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .topic-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 0.95rem;
+    }
+
+    .topic-row strong {
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    .topic-row small {
+      display: block;
+      color: rgba(255, 255, 255, 0.65);
+      margin-top: 0.25rem;
+      font-size: 0.9rem;
+    }
+
+    .topic-state {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.32rem 0.72rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      min-width: 100px;
+      text-align: center;
+    }
+
+    .topic-card.not-started .topic-state {
+      background: rgba(255, 255, 255, 0.1);
+      color: #bfd1ff;
+    }
+
+    .topic-card.in-progress .topic-state {
+      background: rgba(38, 132, 255, 0.18);
+      color: #7cc4ff;
+    }
+
+    .topic-card.mastered .topic-state {
+      background: rgba(35, 233, 148, 0.18);
+      color: #8cffc7;
+    }
+
+    .progress-bar {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+    }
+
+    .progress-bar-inner {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, #2684ff, #0065ff);
+      border-radius: 999px;
+      transition: width 1.2s ease;
+    }
+
+    .progress-text {
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 0.9rem;
+      display: block;
+      margin-top: 0.55rem;
+    }
+
+    @media (max-width: 1100px) {
+      .dashboard-grid {
+        grid-template-columns: repeat(2, minmax(120px, 1fr));
+      }
+
+      .section-content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .page-header {
+        padding: 1rem 1.2rem;
+      }
+
+      .hero {
+        padding: 3rem 1.2rem;
+      }
+
+      .hero-copy h1 {
+        font-size: clamp(2.4rem, 8vw, 3.4rem);
+      }
+
+      .hero-pill {
+        font-size: 0.88rem;
+        padding: 0.72rem 1rem;
+      }
+
+      .hero-icon {
+        width: 60px;
+        height: 60px;
+      }
+
+      .subskill-nodes {
+        position: relative;
+        left: auto;
+        right: auto;
+        bottom: auto;
+        padding-top: 1rem;
+      }
+
+      .mini-network-card {
+        min-height: 300px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .dashboard {
+        align-items: stretch;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-copy {
+        text-align: left;
+      }
+
+      .hero-pill {
+        display: none;
+      }
+
+      .hero-icon {
+        display: none;
+      }
+
+      .skill-summary {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="page-header">
+    <div class="topbar">
+      <div class="brand"><span>MY</span> SKILLS</div>
+      <button class="menu-btn" aria-label="Menu">☰</button>
+    </div>
+    <div class="dashboard">
+      <div class="dashboard-grid">
+        <div class="dashboard-item">
+          <span class="label">Total Topics</span>
+          <strong id="total-count">0</strong>
+        </div>
+        <div class="dashboard-item">
+          <span class="label">Mastered</span>
+          <strong id="mastered-count">0</strong>
+        </div>
+        <div class="dashboard-item">
+          <span class="label">In Progress</span>
+          <strong id="progress-count">0</strong>
+        </div>
+        <div class="dashboard-item">
+          <span class="label">Not Started</span>
+          <strong id="notstarted-count">0</strong>
+        </div>
+      </div>
+      <div class="dashboard-right">
+        <canvas id="dashboard-ring" width="120" height="120"></canvas>
+        <div class="ring-center"><span id="overall-pct">0%</span><small>overall</small></div>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="hero-overlay"></div>
+      <canvas id="hero-canvas"></canvas>
+      <div class="hero-copy">
+        <span class="eyebrow">Skill Network</span>
+        <h1>Unleash your skills and your engineering network</h1>
+        <p>Track progress across frontend, backend, DevOps, and DSA with a premium animated skill graph.</p>
+      </div>
+      <div class="hero-pill pill-1">Frontend Development</div>
+      <div class="hero-pill pill-2">Backend Development</div>
+      <div class="hero-pill pill-3">DevOps</div>
+      <div class="hero-pill pill-4">DSA</div>
+      <div class="hero-icon icon-1">F</div>
+      <div class="hero-icon icon-2">JS</div>
+      <div class="hero-icon icon-3">DB</div>
+    </section>
+    <section id="skills-sections"></section>
+  </main>
+  <script>
+    const skillData = [
+      {
+        title: 'Frontend Development',
+        description: 'Polish interfaces and web interactions with modern CSS and JavaScript workflows.',
+        subskills: [
+          { name: 'HTML/CSS', topics: [ { name: 'Flexbox', progress: 80 }, { name: 'Grid', progress: 60 }, { name: 'Animations', progress: 40 } ] },
+          { name: 'JavaScript', topics: [ { name: 'ES6', progress: 90 }, { name: 'Async', progress: 70 }, { name: 'DOM', progress: 85 } ] },
+          { name: 'React', topics: [ { name: 'Hooks', progress: 75 }, { name: 'Redux', progress: 50 }, { name: 'Testing', progress: 30 } ] },
+        ],
+      },
+      {
+        title: 'Backend Development',
+        description: 'Build stable services, authentication flows, and efficient data systems for the backend layer.',
+        subskills: [
+          { name: 'Node.js', topics: [ { name: 'Express', progress: 80 }, { name: 'REST APIs', progress: 70 }, { name: 'Auth', progress: 60 } ] },
+          { name: 'Databases', topics: [ { name: 'SQL', progress: 65 }, { name: 'MongoDB', progress: 55 }, { name: 'Redis', progress: 20 } ] },
+        ],
+      },
+      {
+        title: 'DevOps',
+        description: 'Automate deployment pipelines, container orchestration, and continuous delivery workflows.',
+        subskills: [
+          { name: 'Docker', topics: [ { name: 'Containers', progress: 70 }, { name: 'Compose', progress: 50 } ] },
+          { name: 'CI/CD', topics: [ { name: 'GitHub Actions', progress: 60 }, { name: 'Jenkins', progress: 30 } ] },
+        ],
+      },
+      {
+        title: 'DSA',
+        description: 'Map core algorithmic thinking with the most common interview patterns and graph structures.',
+        subskills: [
+          { name: 'Arrays', topics: [ { name: 'Arrays', progress: 85 } ] },
+          { name: 'Trees', topics: [ { name: 'Trees', progress: 60 } ] },
+          { name: 'Graphs', topics: [ { name: 'Graphs', progress: 40 } ] },
+          { name: 'DP', topics: [ { name: 'DP', progress: 30 } ] },
+        ],
+      },
+    ];
+
+    const states = ['Not Started', 'In Progress', 'Mastered'];
+    const topicStates = {};
+    const selectedSubskill = [];
+    const miniNetworkData = [];
+    const heroNodes = [];
+    let heroMouse = { x: null, y: null };
+
+    const dpr = window.devicePixelRatio || 1;
+    const heroCanvas = document.getElementById('hero-canvas');
+    const heroCtx = heroCanvas.getContext('2d');
+
+    function computeProgress(base, state) {
+      if (state === 0) return 0;
+      if (state === 1) return Math.max(20, Math.round(base * 0.6));
+      return 100;
+    }
+
+    function buildSections() {
+      const container = document.getElementById('skills-sections');
+      skillData.forEach((skill, sectionIndex) => {
+        const totalTopics = skill.subskills.reduce((sum, sub) => sum + sub.topics.length, 0);
+        const section = document.createElement('section');
+        section.className = 'skill-section';
+        section.id = `section-${sectionIndex}`;
+        section.innerHTML = `
+          <div class="section-content">
+            <div class="skill-info">
+              <span class="section-tag">Core Mastery</span>
+              <h2>${skill.title}</h2>
+              <p>${skill.description}</p>
+              <div class="skill-summary">
+                <div class="summary-card"><strong>${skill.subskills.length}</strong><span>Subskill nodes</span></div>
+                <div class="summary-card"><strong>${totalTopics}</strong><span>Topics tracked</span></div>
+                <div class="summary-card"><strong id="section-${sectionIndex}-mastered">0</strong><span>Mastered</span></div>
+                <div class="summary-card"><strong id="section-${sectionIndex}-progress">0%</strong><span>Section progress</span></div>
+              </div>
+            </div>
+            <div class="skill-map">
+              <div class="mini-network-card">
+                <canvas class="mini-network" data-section="${sectionIndex}"></canvas>
+                <div class="subskill-nodes">
+                  ${skill.subskills
+                    .map(
+                      (subskill, subIndex) =>
+                        `<button class="sub-node${subIndex === 0 ? ' active' : ''}" type="button" data-section="${sectionIndex}" data-sub="${subIndex}">${subskill.name}</button>`
+                    )
+                    .join('')}
+                </div>
+              </div>
+              <div class="subskill-panel">
+                <h3 class="panel-title">Select a node to explore topics</h3>
+                <div class="topic-list"></div>
+              </div>
+            </div>
+          </div>
+        `;
+        container.appendChild(section);
+        selectedSubskill[sectionIndex] = 0;
+      });
+    }
+
+    function renderSubskillPanel(sectionIndex, subIndex) {
+      const section = document.querySelector(`#section-${sectionIndex}`);
+      const subskill = skillData[sectionIndex].subskills[subIndex];
+      const panel = section.querySelector('.subskill-panel');
+      panel.querySelector('.panel-title').textContent = `${subskill.name} topics`;
+      const list = panel.querySelector('.topic-list');
+      list.innerHTML = subskill.topics
+        .map((topic, topicIndex) => {
+          const topicId = `s${sectionIndex}-u${subIndex}-t${topicIndex}`;
+          if (!(topicId in topicStates)) topicStates[topicId] = 0;
+          const stateIndex = topicStates[topicId];
+          const current = computeProgress(topic.progress, stateIndex);
+          const stateClass = ['not-started', 'in-progress', 'mastered'][stateIndex];
+          return `
+            <div class="topic-card ${stateClass}" data-topic-id="${topicId}" data-base="${topic.progress}">
+              <div class="topic-row">
+                <div>
+                  <strong>${topic.name}</strong>
+                  <small>${topic.progress}% target</small>
+                </div>
+                <span class="topic-state">${states[stateIndex]}</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-bar-inner" data-target="${current}" style="width:0%"></div>
+              </div>
+              <span class="progress-text">${current}% complete</span>
+            </div>
+          `;
+        })
+        .join('');
+
+      list.querySelectorAll('.topic-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const topicId = card.dataset.topicId;
+          const base = Number(card.dataset.base);
+          topicStates[topicId] = (topicStates[topicId] + 1) % 3;
+          updateTopicCard(card, base);
+          updateDashboard();
+          updateSectionSummary(sectionIndex);
+        });
+        progressObserver.observe(card);
+      });
+
+      section.querySelectorAll('.sub-node').forEach(button => {
+        button.classList.toggle('active', Number(button.dataset.sub) === subIndex);
+      });
+
+      updateSectionSummary(sectionIndex);
+    }
+
+    function updateTopicCard(card, base) {
+      const topicId = card.dataset.topicId;
+      const stateIndex = topicStates[topicId];
+      const progress = computeProgress(base, stateIndex);
+      card.classList.remove('not-started', 'in-progress', 'mastered');
+      card.classList.add(['not-started', 'in-progress', 'mastered'][stateIndex]);
+      card.querySelector('.topic-state').textContent = states[stateIndex];
+      const inner = card.querySelector('.progress-bar-inner');
+      inner.dataset.target = progress;
+      card.querySelector('.progress-text').textContent = `${progress}% complete`;
+      if (card.classList.contains('entered')) {
+        inner.style.width = `${progress}%`;
+      }
+    }
+
+    function updateSectionSummary(sectionIndex) {
+      const section = document.querySelector(`#section-${sectionIndex}`);
+      let mastered = 0;
+      let total = 0;
+      let sum = 0;
+      skillData[sectionIndex].subskills.forEach((subskill, si) => {
+        subskill.topics.forEach((topic, ti) => {
+          const topicId = `s${sectionIndex}-u${si}-t${ti}`;
+          const state = topicStates[topicId] || 0;
+          const score = computeProgress(topic.progress, state);
+          sum += score;
+          total += 1;
+          if (state === 2) mastered += 1;
+        });
+      });
+      const sectionPct = total ? Math.round(sum / total) : 0;
+      section.querySelector(`#section-${sectionIndex}-mastered`).textContent = mastered;
+      section.querySelector(`#section-${sectionIndex}-progress`).textContent = `${sectionPct}%`;
+    }
+
+    function updateDashboard() {
+      let total = 0;
+      let mastered = 0;
+      let inProgress = 0;
+      let notStarted = 0;
+      let sum = 0;
+      skillData.forEach((skill, si) => {
+        skill.subskills.forEach((subskill, sj) => {
+          subskill.topics.forEach((topic, ti) => {
+            const topicId = `s${si}-u${sj}-t${ti}`;
+            const state = topicStates[topicId] || 0;
+            if (state === 0) notStarted += 1;
+            if (state === 1) inProgress += 1;
+            if (state === 2) mastered += 1;
+            sum += computeProgress(topic.progress, state);
+            total += 1;
+          });
+        });
+      });
+      document.getElementById('total-count').textContent = total;
+      document.getElementById('mastered-count').textContent = mastered;
+      document.getElementById('progress-count').textContent = inProgress;
+      document.getElementById('notstarted-count').textContent = notStarted;
+      const overall = total ? Math.round(sum / total) : 0;
+      document.getElementById('overall-pct').textContent = `${overall}%`;
+      drawDashboardRing(overall);
+    }
+
+    function resizeHeroCanvas() {
+      const width = heroCanvas.offsetWidth;
+      const height = heroCanvas.offsetHeight;
+      heroCanvas.width = width * dpr;
+      heroCanvas.height = height * dpr;
+      heroCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function initHeroNodes() {
+      heroNodes.length = 0;
+      const width = heroCanvas.offsetWidth;
+      const height = heroCanvas.offsetHeight;
+      for (let i = 0; i < 18; i += 1) {
+        heroNodes.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.25,
+          vy: (Math.random() - 0.5) * 0.25,
+          r: 6 + Math.random() * 2,
+        });
+      }
+    }
+
+    function drawHeroConnections() {
+      const maxDistance = 180;
+      heroCtx.lineCap = 'round';
+      heroCtx.lineJoin = 'round';
+      for (let i = 0; i < heroNodes.length; i += 1) {
+        for (let j = i + 1; j < heroNodes.length; j += 1) {
+          const a = heroNodes[i];
+          const b = heroNodes[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < maxDistance) {
+            const strength = 1 - distance / maxDistance;
+            const hoverA = heroMouse.x !== null ? Math.hypot(a.x - heroMouse.x, a.y - heroMouse.y) : 999;
+            const hoverB = heroMouse.x !== null ? Math.hypot(b.x - heroMouse.x, b.y - heroMouse.y) : 999;
+            const highlight = Math.max(0, 0.8 - Math.min(hoverA, hoverB) / 220);
+            heroCtx.strokeStyle = `rgba(38, 132, 255, ${0.08 + strength * 0.12 + highlight * 0.14})`;
+            heroCtx.lineWidth = 1 + strength * 1.4 + highlight * 1.2;
+            heroCtx.beginPath();
+            const cp1x = (a.x + b.x) / 2 + (b.y - a.y) * 0.12;
+            const cp1y = (a.y + b.y) / 2 + (a.x - b.x) * 0.12;
+            const cp2x = (a.x + b.x) / 2 - (b.y - a.y) * 0.12;
+            const cp2y = (a.y + b.y) / 2 - (a.x - b.x) * 0.12;
+            heroCtx.moveTo(a.x, a.y);
+            heroCtx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, b.x, b.y);
+            heroCtx.stroke();
+          }
+        }
+      }
+    }
+
+    function drawHeroNodes() {
+      heroNodes.forEach(node => {
+        const hoverDistance = heroMouse.x !== null ? Math.hypot(node.x - heroMouse.x, node.y - heroMouse.y) : 999;
+        const glow = Math.max(0, 0.85 - hoverDistance / 180);
+        heroCtx.beginPath();
+        heroCtx.arc(node.x, node.y, node.r, 0, Math.PI * 2);
+        heroCtx.fillStyle = `rgba(38, 132, 255, ${0.9 + glow * 0.16})`;
+        heroCtx.shadowColor = `rgba(38, 132, 255, ${0.5 + glow * 0.25})`;
+        heroCtx.shadowBlur = 18 * glow;
+        heroCtx.fill();
+        heroCtx.shadowBlur = 0;
+      });
+    }
+
+    function updateHeroNodes() {
+      const width = heroCanvas.offsetWidth;
+      const height = heroCanvas.offsetHeight;
+      heroNodes.forEach(node => {
+        node.x += node.vx;
+        node.y += node.vy;
+        if (node.x < 0 || node.x > width) node.vx *= -1;
+        if (node.y < 0 || node.y > height) node.vy *= -1;
+        if (node.x < 8) node.x = 8;
+        if (node.y < 8) node.y = 8;
+        if (node.x > width - 8) node.x = width - 8;
+        if (node.y > height - 8) node.y = height - 8;
+      });
+    }
+
+    function animateHero() {
+      heroCtx.clearRect(0, 0, heroCanvas.offsetWidth, heroCanvas.offsetHeight);
+      drawHeroConnections();
+      drawHeroNodes();
+      updateHeroNodes();
+      requestAnimationFrame(animateHero);
+    }
+
+    function resizeMiniCanvases() {
+      miniNetworkData.forEach((entry, index) => {
+        const canvas = entry.canvas;
+        const width = canvas.offsetWidth;
+        const height = canvas.offsetHeight;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        entry.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        drawMiniNetwork(index);
+      });
+    }
+
+    function drawMiniNetwork(sectionIndex) {
+      const entry = miniNetworkData[sectionIndex];
+      const canvas = entry.canvas;
+      const ctx = entry.ctx;
+      const width = canvas.width / dpr;
+      const height = canvas.height / dpr;
+      const centerX = width / 2;
+      const centerY = height / 2 - 10;
+      const radius = Math.min(width, height) * 0.28;
+      const subskills = skillData[sectionIndex].subskills;
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = 'rgba(255,255,255,0.02)';
+      ctx.fillRect(0, 0, width, height);
+      ctx.save();
+      ctx.strokeStyle = 'rgba(38, 132, 255, 0.12)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius + 24, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      const positions = subskills.map((sub, index) => {
+        const angle = (Math.PI * 2 * index) / subskills.length - Math.PI / 2;
+        return {
+          x: centerX + Math.cos(angle) * radius,
+          y: centerY + Math.sin(angle) * radius,
+        };
+      });
+      entry.positions = positions;
+
+      ctx.strokeStyle = 'rgba(38, 132, 255, 0.2)';
+      ctx.lineWidth = 1.2;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      positions.forEach(pos => {
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        const cp1x = centerX + (pos.x - centerX) * 0.45;
+        const cp1y = centerY - 20;
+        const cp2x = centerX + (pos.x - centerX) * 0.55;
+        const cp2y = centerY - 20;
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, pos.x, pos.y);
+        ctx.stroke();
+      });
+
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 18, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(38, 132, 255, 0.16)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(38, 132, 255, 0.6)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      positions.forEach((pos, index) => {
+        const active = selectedSubskill[sectionIndex] === index;
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, active ? 12 : 10, 0, Math.PI * 2);
+        ctx.fillStyle = active ? 'rgba(38, 132, 255, 0.98)' : 'rgba(38, 132, 255, 0.4)';
+        ctx.fill();
+        ctx.strokeStyle = active ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.4)';
+        ctx.lineWidth = active ? 2 : 1;
+        ctx.stroke();
+      });
+
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.72)';
+      ctx.font = '600 0.82rem Inter, sans-serif';
+      ctx.textAlign = 'center';
+      positions.forEach((pos, index) => {
+        const label = subskills[index].name;
+        const words = label.split(' ');
+        const text = words.join('\n');
+        ctx.fillText(label, pos.x, pos.y + 28);
+      });
+    }
+
+    const sectionObserver = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            sectionObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.24 }
+    );
+
+    const progressObserver = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const card = entry.target;
+            card.classList.add('entered');
+            const inner = card.querySelector('.progress-bar-inner');
+            inner.style.width = `${inner.dataset.target}%`;
+            progressObserver.unobserve(card);
+          }
+        });
+      },
+      { threshold: 0.4 }
+    );
+
+    function drawDashboardRing(percent) {
+      const canvas = document.getElementById('dashboard-ring');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      const center = width / 2;
+      const radius = 48;
+      ctx.clearRect(0, 0, width, height);
+      ctx.beginPath();
+      ctx.arc(center, center, radius, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+      ctx.lineWidth = 10;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(center, center, radius, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * percent) / 100);
+      ctx.strokeStyle = 'rgba(38, 132, 255, 0.96)';
+      ctx.lineWidth = 10;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+    }
+
+    function setupInteractions() {
+      document.querySelectorAll('.sub-node').forEach(button => {
+        button.addEventListener('click', () => {
+          const sectionIndex = Number(button.dataset.section);
+          const subIndex = Number(button.dataset.sub);
+          selectedSubskill[sectionIndex] = subIndex;
+          renderSubskillPanel(sectionIndex, subIndex);
+          drawMiniNetwork(sectionIndex);
+        });
+      });
+
+      heroCanvas.addEventListener('mousemove', event => {
+        const rect = heroCanvas.getBoundingClientRect();
+        heroMouse.x = event.clientX - rect.left;
+        heroMouse.y = event.clientY - rect.top;
+      });
+      heroCanvas.addEventListener('mouseleave', () => {
+        heroMouse.x = null;
+        heroMouse.y = null;
+      });
+    }
+
+    function initializePage() {
+      buildSections();
+      document.querySelectorAll('.skill-section').forEach(section => sectionObserver.observe(section));
+      document.querySelectorAll('.mini-network').forEach((canvas, index) => {
+        miniNetworkData[index] = { canvas, ctx: canvas.getContext('2d'), positions: [] };
+      });
+      resizeHeroCanvas();
+      initHeroNodes();
+      resizeMiniCanvases();
+      skillData.forEach((skill, sectionIndex) => {
+        renderSubskillPanel(sectionIndex, 0);
+      });
+      updateDashboard();
+      setupInteractions();
+      animateHero();
+    }
+
+    window.addEventListener('resize', () => {
+      resizeHeroCanvas();
+      resizeMiniCanvases();
+    });
+
+    window.addEventListener('DOMContentLoaded', initializePage);
+  </script>
+</body>
+</html>

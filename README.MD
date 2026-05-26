@@ -152,3 +152,30 @@ Jaise sirf photo ki border, ya ek button ka color
 styles.css mein karo jab:
 Overall design improve karni ho
 Fonts, colors, animations, spacing — sab kuch
+
+
+# deploy your portfolio website free of coast at server / live.'
+# 1. using netlify: 
+process
+1. open netlify
+2. singnup 
+3. there is lot of folders in your codebase makesure you upload only that folder  you want to deploy 
+4. copy all files from folder ( inde.html , styles.css, image.jpg)
+5. just drag and drop  on netlify 
+6. it gives you link 
+7. share the link anyone can easily check your website 
+
+# 2. **Method 2 — GitHub Pages 
+process
+1. open github 
+2. create new repo (portfoliolive_viagithub)
+3. choose add files then upload files in repo 
+4. here we just copy and paste files from our folder that what we want (no need to git commands direct copy paste )
+5. GitHub Pages open kiya (Settings → Pages)
+6. choose Build and deployment (Static HTML click on  (By GitHub Actions))
+7. workflow generate
+8. Repo → Actions (Deploy static content to Pages)
+9. deployment start after 1-2 minutes 
+10. github gives you the live link share and use from anywhere 
+
+
